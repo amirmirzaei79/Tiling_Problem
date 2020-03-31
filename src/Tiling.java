@@ -137,7 +137,7 @@ public class Tiling extends Application {
      */
     private void firstScreen(Stage stage) {
         Text invalidInput = new Text("");
-        invalidInput.setFont(new Font(12));
+        invalidInput.setFont(new Font(25));
 
         Text sizeText = new Text("Size: ");
         sizeText.setFont(new Font(12));
