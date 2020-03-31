@@ -14,8 +14,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Stack;
 
 public class Tiling extends Application {
     private final int SCREEN_WIDTH = 850, SCREEN_HEIGHT = 950;
@@ -51,6 +49,16 @@ public class Tiling extends Application {
 
     private static ArrayList<Tile> tiles = null;
 
+    /**
+     * Solves The Tiling Problem recursively and stores it in tiles ArrayList
+     *
+     * @param n    size of board
+     * @param mx   missing tile x
+     * @param my   missing tile y
+     * @param left left of current board
+     * @param top  top of current board
+     * @return true if a solution is possible, false if there is no possible solution
+     */
     private static boolean solve(int n, int mx, int my, int left, int top) {
         if (tiles == null)
             tiles = new ArrayList<>();
@@ -77,32 +85,32 @@ public class Tiling extends Application {
             tiles.add(t);
             return true;
         } else {
-            boolean f = true;
+            boolean f;
             Tile t = new Tile();
             t.left = left + n / 2 - 1;
             t.top = top + n / 2 - 1;
             if ((mx - left) < n / 2 && (my - top) < n / 2) {
                 t.direction = Direction.topLeft;
-                f = f & solve(n / 2, mx, my, left, top);
+                f = solve(n / 2, mx, my, left, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2 - 1, left + n / 2, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2, left + n / 2, top + n / 2);
                 f = f & solve(n / 2, left + n / 2 - 1, top + n / 2, left, top + n / 2);
             } else if ((mx - left) >= n / 2 && (my - top) < n / 2) {
                 t.direction = Direction.topRight;
-                f = f & solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
+                f = solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
                 f = f & solve(n / 2, mx, my, left + n / 2, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2, left + n / 2, top + n / 2);
                 f = f & solve(n / 2, left + n / 2 - 1, top + n / 2, left, top + n / 2);
             } else if ((mx - left) >= n / 2 && (my - top) >= n / 2) {
                 t.direction = Direction.bottomRight;
-                f = f & solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
+                f = solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2 - 1, left + n / 2, top);
                 f = f & solve(n / 2, mx, my, left + n / 2, top + n / 2);
                 f = f & solve(n / 2, left + n / 2 - 1, top + n / 2, left, top + n / 2);
             } else // (mx - left) < n / 2 && (my - top) >= n / 2
             {
                 t.direction = Direction.bottomLeft;
-                f = f & solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
+                f = solve(n / 2, left + n / 2 - 1, top + n / 2 - 1, left, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2 - 1, left + n / 2, top);
                 f = f & solve(n / 2, left + n / 2, top + n / 2, left + n / 2, top + n / 2);
                 f = f & solve(n / 2, mx, my, left, top + n / 2);
@@ -118,11 +126,16 @@ public class Tiling extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         firstScreen(stage);
     }
 
-    private void firstScreen(Stage stage) throws Exception {
+    /**
+     * first screen to get size and missing tile x & y
+     *
+     * @param stage stage to set screen to
+     */
+    private void firstScreen(Stage stage) {
         Text invalidInput = new Text("");
         invalidInput.setFont(new Font(12));
 
@@ -195,6 +208,10 @@ public class Tiling extends Application {
         stage.show();
     }
 
+    /**
+     * method to print solution to standard output
+     * should only be called after solve method
+     */
     private void printSolution() {
         for (Tile t : tiles)
             System.out.println(t.left + " _ " + t.top + " _ " + t.direction);
@@ -204,7 +221,15 @@ public class Tiling extends Application {
         System.out.println();
     }
 
-    private void solutionScreen(Stage stage, int n, int mx, int my) throws Exception {
+    /**
+     * solution screen to show the solution and number of used tiles
+     *
+     * @param stage stage to set screen to
+     * @param n     size of board
+     * @param mx    missing tile x
+     * @param my    missing tile y
+     */
+    private void solutionScreen(Stage stage, int n, int mx, int my) {
         int blockSize = SOLUTION_SIZE / n;
 
         Pane solution = new Pane();
